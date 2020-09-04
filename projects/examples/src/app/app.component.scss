@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    padding: 1rem;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.list {
+    display: flex;
+    padding: 1rem;
+    background: #cccccc;
+    flex-direction: column;
+    border-radius: 0.5rem;
+
+    &:not(:nth-child(1)) {
+        margin-left: 3rem;
+    }
+}
+
+.card {
+    display: flex;
+    height: 12rem;
+    width: 12rem;
+    background: #ffffff;
+    border-radius: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+
+    &:not(:nth-child(1)) {
+        margin-top: 1rem;
+    }
+}
