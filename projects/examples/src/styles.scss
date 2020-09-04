@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100;400;700&display=swap");
 
 * {
     box-sizing: border-box;
@@ -7,9 +7,28 @@
     padding: 0;
 }
 
-html, body {
+body {
     height: 100vh;
     width: 100vw;
-    background: #338cff;
-    font-family: 'Noto Sans JP', sans-serif;
+    background: rgb(51,140,255);
+    background: linear-gradient(145deg, rgba(51,140,255,1) 0%, rgba(0,111,255,1) 100%);
+    font-family: "Noto Sans JP", sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #dddddd;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
