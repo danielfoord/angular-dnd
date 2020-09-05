@@ -10,27 +10,44 @@ export class DraggableContainerDirective {
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
-    const afterElement = this.getDraggableAfterElement(event.clientY);
+    const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable')];
+    const afterElement = this.getDraggableAfterElement(event.clientX, event.clientY);
     const draggable = document.querySelector('.dragging');
-    
-    if (afterElement == null) {
-      this.elementRef.nativeElement.appendChild(draggable);
-    } else {
+
+    const draggableIndex = draggableElements.indexOf(draggable);
+    const afterIndex = draggableElements.indexOf(afterElement);
+
+    // No element after the position we are trying to insert
+    if (!afterElement) {
+      // Make sure we are adding to the back of the collection, or we are adding to an empty collection
+      if (draggableIndex + 1 === draggableElements.length || draggableIndex === -1) {
+        this.elementRef.nativeElement.appendChild(draggable);
+      }
+      return;
+    }
+
+    if (draggableIndex > afterIndex) {
       this.elementRef.nativeElement.insertBefore(draggable, afterElement);
+    } else {
+      this.elementRef.nativeElement.insertBefore(draggable, afterElement.nextSibling);
     }
   }
 
-  private getDraggableAfterElement(y: number) {
+  private getDraggableAfterElement(x: number, y: number) {
     const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable:not(.dragging)')];
     return draggableElements.reduce((closest, child) => {
       const box = child.getBoundingClientRect()
-      const offset = y - box.top - box.height / 2;
-      if (offset < 0 && offset > closest.offset) {
-        return { offset: offset, element: child };
+      if (this.isInsideClientRect(child, x, y)) {
+        return { element: child };
       } else {
         return closest;
       }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }, {}).element;
+  }
+
+  private isInsideClientRect(element: HTMLElement, x: number, y: number) {
+    const { top, bottom, left, right } = element.getBoundingClientRect();
+    return y >= top && y <= bottom && x >= left && x <= right;
   }
 
 }

@@ -6,6 +6,9 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 })
 export class DraggableDirective {
 
+  x: number;
+  y: number;
+
   constructor(public elementRef: ElementRef) {
     this.elementRef.nativeElement.style.cursor = 'move';
     this.elementRef.nativeElement.draggable = true;
@@ -25,11 +28,4 @@ export class DraggableDirective {
     this.elementRef.nativeElement.classList.remove('dragging');
     this.elementRef.nativeElement.style.opacity = 1;
   }
-
-  @HostListener('drag', ['$event'])
-  onDrag(event: DragEvent) {
-    // TODO: Position ghost clone element
-    // console.debug(event);
-  }
-
 }

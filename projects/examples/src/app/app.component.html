@@ -1,20 +1,9 @@
-<!-- <lib-angular-dnd></lib-angular-dnd> -->
-<div class="scroll-pane">
-    <div class="container">
-        <div class="list" libDraggableContainer>
-            <div class="card" libDraggable>1</div>
-            <div class="card" libDraggable>2</div>
-            <div class="card" libDraggable>3</div>
-        </div>
-        <div class="list" libDraggableContainer>
-            <div class="card" libDraggable>4</div>
-            <div class="card" libDraggable>5</div>
-        </div>
-        <div class="list" libDraggableContainer>
-            <div class="card" libDraggable>6</div>
-            <div class="card" libDraggable>7</div>
-            <div class="card" libDraggable>8</div>
-            <div class="card" libDraggable>9</div>
-        </div>
-    </div>
+<div class="navbar">
+    <a class="navbar-link" [routerLink]="['lists']">
+        Lists
+    </a>
+    <a class="navbar-link" [routerLink]="['grid']">
+        Grid
+    </a>
 </div>
+<router-outlet></router-outlet>

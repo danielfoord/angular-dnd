@@ -1,0 +1,32 @@
+.scroll-pane {
+    overflow-x: auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.container {
+    display: flex;
+    padding: 2rem 1rem 2rem 2rem;
+    justify-content: center;
+    align-items: flex-start;
+    float: left;
+    max-width: 1000px;
+    flex-wrap: wrap;
+}
+
+.card {
+    display: flex;
+    height: 12rem;
+    width: 12rem;
+    background: #ffffff;
+    border-radius: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+    user-select: none;
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+}
