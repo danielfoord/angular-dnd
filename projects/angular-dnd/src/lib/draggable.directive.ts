@@ -3,8 +3,7 @@ import { DraggableService } from './draggable.service';
 
 
 @Directive({
-  selector: '[libDraggable]',
-
+  selector: '[libDraggable]'
 })
 export class DraggableDirective {
 
