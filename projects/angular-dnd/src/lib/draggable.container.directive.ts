@@ -1,17 +1,19 @@
 import { Directive, HostListener, ElementRef } from '@angular/core';
+import { DraggableService } from './draggable.service';
 
 @Directive({
   selector: '[libDraggableContainer]'
 })
 export class DraggableContainerDirective {
 
-  constructor(private elementRef: ElementRef) { }
+  constructor(private elementRef: ElementRef, private draggableService: DraggableService) { }
 
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
     const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable')];
-    const afterElement = this.getDraggableAfterElement(event.clientX, event.clientY);
+    const { x, y } = this.draggableService.getDraggablePosition();
+    const afterElement = this.getDraggableAfterElement(event.clientX - x, event.clientY - y);
     const draggable = document.querySelector('.dragging');
 
     const draggableIndex = draggableElements.indexOf(draggable);
