@@ -6,7 +6,7 @@
     "start": "ng serve examples",
     "build": "ng build",
     "build:angular-dnd": "ng build angular-dnd",
-    "watch:angular-dnd": "ng build angular-dnd --watch",
+    "watch": "ng build angular-dnd --watch",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
