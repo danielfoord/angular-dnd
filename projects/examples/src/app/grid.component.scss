@@ -4,6 +4,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    background: rgb(51, 140, 255);
+    background: linear-gradient(145deg, rgb(0, 214, 54) 0%, rgb(0, 102, 39) 100%);
 }
 
 .container {
@@ -12,7 +14,6 @@
     justify-content: center;
     align-items: flex-start;
     float: left;
-    max-width: 80rem;
     flex-wrap: wrap;
 }
 
@@ -29,4 +30,19 @@
     user-select: none;
     margin-bottom: 1rem;
     margin-right: 1rem;
+    transition: width 100ms ease, height 100ms ease;
+
+    @media screen and (max-width: 686px) {
+        width: 100%;
+    }
+
+    @media screen and (min-width: 687px) and (max-width: 830px) {
+        width: 12rem;
+        height: 12rem;
+    }
+
+    @media screen and (min-width: 831px) {
+        width: 15rem;
+        height: 15rem;
+    }
 }

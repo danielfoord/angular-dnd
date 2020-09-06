@@ -1,14 +1,22 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, OnInit } from '@angular/core';
 import { DraggableService } from './draggable.service';
-
+import { Subject, Observable } from 'rxjs';
+import { throttleTime } from 'rxjs/operators';
 
 @Directive({
   selector: '[libDraggable]'
 })
-export class DraggableDirective {
+export class DraggableDirective implements OnInit {
 
   private ghostNode: Element;
   private fakeGhost: Element;
+  private onDragSubject: Subject<DragEvent> = new Subject();
+
+  private get $onDrag(): Observable<DragEvent> {
+    return this.onDragSubject.asObservable().pipe(
+      throttleTime(7) // 144ish frames per second
+    );
+  }
 
   private get ghostElement(): HTMLElement {
     return this.ghostNode as HTMLElement;
@@ -20,12 +28,17 @@ export class DraggableDirective {
     this.elementRef.nativeElement.classList.add('draggable');
   }
 
+  ngOnInit(): void {
+    this.$onDrag.subscribe((event: DragEvent) => {
+      const { sourceOriginXOffset, sourceOriginYOffset } = this.draggableService.getDraggablePosition();
+      this.ghostElement.style.top = `${event.clientY - sourceOriginYOffset}px`;
+      this.ghostElement.style.left = `${event.clientX - sourceOriginXOffset}px`;
+    });
+  }
+
   @HostListener('drag', ['$event'])
   onDrag(event: DragEvent) {
-    // TODO: Throttle this
-    const { sourceOriginXOffset, sourceOriginYOffset } = this.draggableService.getDraggablePosition();
-    this.ghostElement.style.top = `${event.clientY - sourceOriginYOffset}px`;
-    this.ghostElement.style.left = `${event.clientX - sourceOriginXOffset}px`;
+   this.onDragSubject.next(event);
   }
 
   @HostListener('dragstart', ['$event'])
@@ -58,6 +71,7 @@ export class DraggableDirective {
     this.ghostElement.style.pointerEvents = 'none';
     this.ghostElement.style.boxShadow = '0 0 0.5rem 0.5rem rgba(0, 0, 0, 0.2)';
     this.ghostElement.style.transform = 'rotate(3deg)';
+    this.ghostElement.style.width = `${width}px`;
     document.querySelector('body').appendChild(this.ghostElement);
   }
 
