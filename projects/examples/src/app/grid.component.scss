@@ -1,48 +1,67 @@
-.scroll-pane {
-    overflow-x: auto;
-    height: 100%;
+.main-container {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+
+  .left {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    background: rgb(51, 140, 255);
-    background: linear-gradient(145deg, rgb(0, 214, 54) 0%, rgb(0, 102, 39) 100%);
+    flex-direction: column;
+    background: #ffffff;
+    width: 20rem;
+    box-shadow: 0.5rem 0 1rem 0.1rem rgba(0, 0, 0, 0.4);
+    z-index: 2;
+    padding: 2rem;
+
+    h3 {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .right {
+    width: calc(100% - 20rem);
+    z-index: 1;
+  }
+}
+
+.scroll-pane {
+  overflow-x: auto;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: rgb(51, 140, 255);
+  background: linear-gradient(145deg, rgb(0, 214, 54) 0%, rgb(0, 102, 39) 100%);
 }
 
 .container {
-    display: flex;
-    padding: 2rem 1rem 2rem 2rem;
-    justify-content: center;
-    align-items: flex-start;
-    float: left;
-    flex-wrap: wrap;
+  display: flex;
+  padding: 2rem 1rem 2rem 2rem;
+  justify-content: center;
+  align-items: flex-start;
+  float: left;
+  flex-wrap: wrap;
 }
 
 .card {
-    display: flex;
-    height: 12rem;
-    width: 12rem;
-    background: #ffffff;
-    border-radius: 0.5rem;
-    justify-content: center;
-    align-items: center;
-    font-size: 2.5rem;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
-    user-select: none;
-    margin-bottom: 1rem;
-    margin-right: 1rem;
-    transition: width 100ms ease, height 100ms ease;
+  display: flex;
+  height: 12rem;
+  width: 12rem;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.5rem;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+  user-select: none;
+  margin-bottom: 1rem;
+  margin-right: 1rem;
+  transition: width 100ms ease, height 100ms ease;
 
-    @media screen and (max-width: 686px) {
-        width: 100%;
-    }
+  @media screen and (max-width: 888px) {
+    width: 100%;
+  }
 
-    @media screen and (min-width: 687px) and (max-width: 830px) {
-        width: 12rem;
-        height: 12rem;
-    }
-
-    @media screen and (min-width: 831px) {
-        width: 15rem;
-        height: 15rem;
-    }
+  @media screen and (min-width: 889px) and (max-width: 995px) {
+    width: calc(50% - 1rem);
+  }
 }

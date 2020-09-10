@@ -1,16 +1,21 @@
-<div class="scroll-pane">
-    <div class="container" libDraggableContainer>
-        <div class="card" libDraggable>1</div>
-        <div class="card" libDraggable>2</div>
-        <div class="card" libDraggable>3</div>
-        <div class="card" libDraggable>4</div>
-        <div class="card" libDraggable>5</div>
-        <div class="card" libDraggable>6</div>
-        <div class="card" libDraggable>7</div>
-        <div class="card" libDraggable>8</div>
-        <div class="card" libDraggable>9</div>
-        <div class="card" libDraggable>10</div>
-        <div class="card" libDraggable>11</div>
-        <div class="card" libDraggable>12</div>
+<div class="main-container">
+  <div class="left">
+    <h3>Items:</h3>
+    <pre>{{items | json}}</pre>
+  </div>
+  <div class="right">
+    <div class="scroll-pane">
+      <div class="container"
+           libDraggableContainer
+           [data]="items">
+        <ng-container *ngFor="let item of items">
+          <div class="card"
+               libDraggable
+               [data]="item">
+            {{item + 1}}
+          </div>
+        </ng-container>
+      </div>
     </div>
+  </div>
 </div>

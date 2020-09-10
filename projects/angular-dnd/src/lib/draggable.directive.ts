@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, OnInit } from '@angular/core';
+import { Directive, ElementRef, HostListener, OnInit, Input } from '@angular/core';
 import { DraggableService } from './draggable.service';
 import { Subject, Observable } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
@@ -8,6 +8,9 @@ import { throttleTime } from 'rxjs/operators';
 })
 export class DraggableDirective implements OnInit {
 
+  @Input()
+  data: any[];
+  
   private ghostNode: Element;
   private fakeGhost: Element;
   private onDragSubject: Subject<DragEvent> = new Subject();
@@ -72,6 +75,7 @@ export class DraggableDirective implements OnInit {
     this.ghostElement.style.boxShadow = '0 0 0.5rem 0.5rem rgba(0, 0, 0, 0.2)';
     this.ghostElement.style.transform = 'rotate(3deg)';
     this.ghostElement.style.width = `${width}px`;
+    this.ghostElement.style.zIndex = '100';
     document.querySelector('body').appendChild(this.ghostElement);
   }
 

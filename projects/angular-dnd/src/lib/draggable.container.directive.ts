@@ -1,18 +1,40 @@
-import { Directive, HostListener, ElementRef } from '@angular/core';
+import { Directive, HostListener, ElementRef, Input, QueryList, ContentChildren, AfterContentInit } from '@angular/core';
 import { DraggableService } from './draggable.service';
+import { DraggableDirective } from './draggable.directive';
 
 @Directive({
   selector: '[libDraggableContainer]'
 })
-export class DraggableContainerDirective {
+export class DraggableContainerDirective implements AfterContentInit {
 
-  constructor(private elementRef: ElementRef, private draggableService: DraggableService) { }
+  @Input()
+  data: any[];
+  
+  @ContentChildren(DraggableDirective)
+  draggables: QueryList<DraggableDirective>;
+
+  constructor(private elementRef: ElementRef, private draggableService: DraggableService) {
+    this.elementRef.nativeElement.style.pointerEvents = '';
+  }
+
+  ngAfterContentInit(): void {
+    console.debug(this.draggables);
+    this.draggables.changes.subscribe(changes => {
+      console.debug(changes);
+    });
+  }
 
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
-    const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable')];
     const draggable = document.querySelector('.dragging');
+
+    if (!draggable) {
+      return;
+    }
+
+    const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable')];
+
     const { sourceOriginX, sourceOriginY } = this.draggableService.getDraggablePosition();
     const afterElement = this.getDraggableAfterElement(draggable, event.clientX - sourceOriginX, event.clientY - sourceOriginY);
 
