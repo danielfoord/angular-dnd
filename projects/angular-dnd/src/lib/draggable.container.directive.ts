@@ -9,52 +9,57 @@ export class DraggableContainerDirective implements AfterContentInit {
 
   @Input()
   data: any[];
-  
+
   @ContentChildren(DraggableDirective)
   draggables: QueryList<DraggableDirective>;
 
-  constructor(private elementRef: ElementRef, private draggableService: DraggableService) {
+  public get draggableElements(): Array<Element> {
+    return [...this.elementRef.nativeElement.querySelectorAll('.dnd-draggable')];
+  }
+
+  constructor(public elementRef: ElementRef, private draggableService: DraggableService) {
     this.elementRef.nativeElement.style.pointerEvents = '';
   }
 
   ngAfterContentInit(): void {
-    console.debug(this.draggables);
-    this.draggables.changes.subscribe(changes => {
-      console.debug(changes);
-    });
+    this.draggables.forEach(d => d.parent = this);
   }
 
   @HostListener('dragover', ['$event'])
   onDragOver(event: DragEvent) {
     event.preventDefault();
-    const draggable = document.querySelector('.dragging');
+
+    // TODO: This should be searched for in the parent of this directive (DraggableContextDirective)
+    const draggable = this.draggables.find(d => d.dragging);
 
     if (!draggable) {
       return;
     }
 
-    const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable')];
+    const draggableElement = draggable.elementRef.nativeElement;
 
     const { sourceOriginX, sourceOriginY } = this.draggableService.getDraggablePosition();
-    const afterElement = this.getDraggableAfterElement(draggable, event.clientX - sourceOriginX, event.clientY - sourceOriginY);
+    const afterElement = this.getDraggableAfterElement(draggableElement, event.clientX - sourceOriginX, event.clientY - sourceOriginY);
 
-    const draggableIndex = draggableElements.indexOf(draggable);
-    const afterIndex = draggableElements.indexOf(afterElement);
+    const draggableIndex = this.draggableElements.indexOf(draggableElement);
+    const afterIndex = this.draggableElements.indexOf(afterElement);
 
     // No element after the position we are trying to insert
     if (!afterElement) {
       // Make sure we are adding to the back of the collection, or we are adding to an empty collection
-      if (draggableIndex + 1 === draggableElements.length || draggableIndex === -1) {
-        this.elementRef.nativeElement.appendChild(draggable);
+      if (draggableIndex + 1 === this.draggableElements.length || draggableIndex === -1) {
+        this.elementRef.nativeElement.appendChild(draggableElement);
       }
       return;
     }
 
     if (draggableIndex > afterIndex) {
-      this.elementRef.nativeElement.insertBefore(draggable, afterElement);
+      this.elementRef.nativeElement.insertBefore(draggableElement, afterElement);
     } else {
-      this.elementRef.nativeElement.insertBefore(draggable, afterElement.nextSibling);
+      this.elementRef.nativeElement.insertBefore(draggableElement, afterElement.nextSibling);
     }
+
+    draggable.targetIndex = afterIndex;
   }
 
   private getDraggableAfterElement(source: Element, sourceCenterX: number, sourceCenterY: number) {
@@ -64,7 +69,7 @@ export class DraggableContainerDirective implements AfterContentInit {
     const sourceBottom = sourceCenterY + (sourceRect.height / 2);
     const sourceRight = sourceCenterX + (sourceRect.width / 2);
 
-    const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.draggable:not(.dragging)')];
+    const draggableElements = [...this.elementRef.nativeElement.querySelectorAll('.dnd-draggable:not(.dnd-dragging)')];
     return draggableElements.find((target) => {
       // Check if source's center is inside the target's bounds 
       // If source is larger or equal to target

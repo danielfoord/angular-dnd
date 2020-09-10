@@ -11,7 +11,8 @@
         <ng-container *ngFor="let item of items">
           <div class="card"
                libDraggable
-               [data]="item">
+               [data]="item"
+               (onDrop)="onItemDrop()">
             {{item + 1}}
           </div>
         </ng-container>

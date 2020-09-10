@@ -10,7 +10,10 @@ export class GridComponent implements OnInit {
 
   ngOnInit(): void {
     this.items = [...Array(12).keys()];
-    console.debug(this);
+  }
+
+  onItemDrop() {
+    console.debug(this.items);
   }
 
 }

@@ -1,7 +1,28 @@
-import { Directive, ElementRef, HostListener, OnInit, Input } from '@angular/core';
+import { Directive, ElementRef, HostListener, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { DraggableService } from './draggable.service';
 import { Subject, Observable } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
+import { DraggableContainerDirective } from './draggable.container.directive';
+
+const moveItemInArray = (array: any[], sourceIndex: number, targetIndex: number): void => {
+  if (!array || array.length === 0) {
+    return;
+  }
+
+  while (sourceIndex < 0) {
+    sourceIndex += array.length;
+  }
+  while (targetIndex < 0) {
+    targetIndex += array.length;
+  }
+  if (targetIndex >= array.length) {
+    var k = targetIndex - array.length;
+    while ((k--) + 1) {
+      array.push(undefined);
+    }
+  }
+  array.splice(targetIndex, 0, array.splice(sourceIndex, 1)[0]);
+};
 
 @Directive({
   selector: '[libDraggable]'
@@ -10,7 +31,20 @@ export class DraggableDirective implements OnInit {
 
   @Input()
   data: any[];
-  
+
+  @Output()
+  onDrop: EventEmitter<void> = new EventEmitter();
+
+  sourceIndex: number;
+
+  targetIndex: number;
+
+  sourceData: any[];
+
+  dragging = false;
+
+  parent: DraggableContainerDirective;
+
   private ghostNode: Element;
   private fakeGhost: Element;
   private onDragSubject: Subject<DragEvent> = new Subject();
@@ -28,7 +62,7 @@ export class DraggableDirective implements OnInit {
   constructor(public elementRef: ElementRef, private draggableService: DraggableService) {
     this.elementRef.nativeElement.style.cursor = 'move';
     this.elementRef.nativeElement.draggable = true;
-    this.elementRef.nativeElement.classList.add('draggable');
+    this.elementRef.nativeElement.classList.add('dnd-draggable');
   }
 
   ngOnInit(): void {
@@ -41,11 +75,14 @@ export class DraggableDirective implements OnInit {
 
   @HostListener('drag', ['$event'])
   onDrag(event: DragEvent) {
-   this.onDragSubject.next(event);
+    this.onDragSubject.next(event);
   }
 
   @HostListener('dragstart', ['$event'])
   onDragStart(event: DragEvent) {
+    this.dragging = true;
+    this.sourceIndex = this.parent.draggableElements.indexOf(this.elementRef.nativeElement);
+    this.sourceData = this.parent.data;
 
     const { top, height, left, width } = this.elementRef.nativeElement.getBoundingClientRect();
     const centerY = top + (height * .5);
@@ -58,7 +95,7 @@ export class DraggableDirective implements OnInit {
     });
 
     // Placeholder styling
-    this.elementRef.nativeElement.classList.add('dragging');
+    this.elementRef.nativeElement.classList.add('dnd-dragging');
     this.elementRef.nativeElement.style.opacity = 0.3;
 
     // Fake a ghost element so we can use a custom one
@@ -81,9 +118,12 @@ export class DraggableDirective implements OnInit {
 
   @HostListener('dragend', ['$event'])
   onDragEnd(_: DragEvent) {
-    this.elementRef.nativeElement.classList.remove('dragging');
+    this.dragging = false;
+    this.elementRef.nativeElement.classList.remove('dnd-dragging');
     this.elementRef.nativeElement.style.opacity = 1;
     this.ghostNode.parentNode.removeChild(this.ghostNode);
     this.fakeGhost = null;
+    moveItemInArray(this.sourceData, this.sourceIndex, this.targetIndex);
+    this.onDrop.next();
   }
 }
