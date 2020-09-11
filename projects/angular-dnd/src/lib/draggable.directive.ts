@@ -5,23 +5,27 @@ import { throttleTime } from 'rxjs/operators';
 import { DraggableContainerDirective } from './draggable.container.directive';
 
 const moveItemInArray = (array: any[], sourceIndex: number, targetIndex: number): any[] => {
-  var clone = [...array];
-  if (!clone || clone.length === 0) {
+  if (!array || array.length === 0) {
     return;
   }
+
+  var clone = [...array];
 
   while (sourceIndex < 0) {
     sourceIndex += clone.length;
   }
+
   while (targetIndex < 0) {
     targetIndex += clone.length;
   }
+
   if (targetIndex >= clone.length) {
     var k = targetIndex - clone.length;
     while ((k--) + 1) {
       clone.push(undefined);
     }
   }
+
   clone.splice(targetIndex, 0, clone.splice(sourceIndex, 1)[0]);
   return clone;
 };

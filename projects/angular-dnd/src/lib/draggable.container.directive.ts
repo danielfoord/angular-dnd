@@ -3,6 +3,9 @@ import { DraggableService } from './draggable.service';
 import { DraggableDirective, DndDropEvent } from './draggable.directive';
 import { Subscription } from 'rxjs';
 
+const isInsideClientRect = (left: number, right: number, top: number, bottom: number, x: number, y: number): boolean =>
+  y >= top && y <= bottom && x >= left && x <= right;
+
 @Directive({
   selector: '[dndDraggableContainer]'
 })
@@ -47,7 +50,7 @@ export class DraggableContainerDirective implements AfterContentInit {
         this.onDropSubscription.unsubscribe();
         this.onDropSubscription = null;
         this.dataChange.emit(event.updatedDataSource);
-      });  
+      });
     }
 
     const draggableElement = draggable.elementRef.nativeElement;
@@ -92,16 +95,12 @@ export class DraggableContainerDirective implements AfterContentInit {
       const targetCenterX = left + (width / 2);
 
       if (sourceRect.height >= height
-        ? this.isInsideClientRect(left, right, top, bottom, sourceCenterX, sourceCenterY)
-        : this.isInsideClientRect(sourceLeft, sourceRight, sourceTop, sourceBottom, targetCenterX, targetCenterY)) {
+        ? isInsideClientRect(left, right, top, bottom, sourceCenterX, sourceCenterY)
+        : isInsideClientRect(sourceLeft, sourceRight, sourceTop, sourceBottom, targetCenterX, targetCenterY)) {
         return true;
       }
       return false;
     });
-  }
-
-  private isInsideClientRect(left: number, right: number, top: number, bottom: number, x: number, y: number) {
-    return y >= top && y <= bottom && x >= left && x <= right;
   }
 
 }
