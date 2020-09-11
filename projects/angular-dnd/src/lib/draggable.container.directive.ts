@@ -1,17 +1,23 @@
-import { Directive, HostListener, ElementRef, Input, QueryList, ContentChildren, AfterContentInit } from '@angular/core';
+import { Directive, HostListener, ElementRef, Input, QueryList, ContentChildren, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { DraggableService } from './draggable.service';
-import { DraggableDirective } from './draggable.directive';
+import { DraggableDirective, DndDropEvent } from './draggable.directive';
+import { Subscription } from 'rxjs';
 
 @Directive({
-  selector: '[libDraggableContainer]'
+  selector: '[dndDraggableContainer]'
 })
 export class DraggableContainerDirective implements AfterContentInit {
 
   @Input()
   data: any[];
 
+  @Output()
+  dataChange: EventEmitter<any[]> = new EventEmitter();
+
   @ContentChildren(DraggableDirective)
   draggables: QueryList<DraggableDirective>;
+
+  private onDropSubscription: Subscription;
 
   public get draggableElements(): Array<Element> {
     return [...this.elementRef.nativeElement.querySelectorAll('.dnd-draggable')];
@@ -34,6 +40,14 @@ export class DraggableContainerDirective implements AfterContentInit {
 
     if (!draggable) {
       return;
+    }
+
+    if (!this.onDropSubscription) {
+      this.onDropSubscription = draggable.onDrop.subscribe((event: DndDropEvent) => {
+        this.onDropSubscription.unsubscribe();
+        this.onDropSubscription = null;
+        this.dataChange.emit(event.updatedDataSource);
+      });  
     }
 
     const draggableElement = draggable.elementRef.nativeElement;

@@ -4,41 +4,56 @@ import { Subject, Observable } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import { DraggableContainerDirective } from './draggable.container.directive';
 
-const moveItemInArray = (array: any[], sourceIndex: number, targetIndex: number): void => {
-  if (!array || array.length === 0) {
+const moveItemInArray = (array: any[], sourceIndex: number, targetIndex: number): any[] => {
+  var clone = [...array];
+  if (!clone || clone.length === 0) {
     return;
   }
 
   while (sourceIndex < 0) {
-    sourceIndex += array.length;
+    sourceIndex += clone.length;
   }
   while (targetIndex < 0) {
-    targetIndex += array.length;
+    targetIndex += clone.length;
   }
-  if (targetIndex >= array.length) {
-    var k = targetIndex - array.length;
+  if (targetIndex >= clone.length) {
+    var k = targetIndex - clone.length;
     while ((k--) + 1) {
-      array.push(undefined);
+      clone.push(undefined);
     }
   }
-  array.splice(targetIndex, 0, array.splice(sourceIndex, 1)[0]);
+  clone.splice(targetIndex, 0, clone.splice(sourceIndex, 1)[0]);
+  return clone;
 };
 
+export interface DndDropEvent {
+  data: any;
+  dataSource: any[];
+  dataTarget: any[];
+  updatedDataSource: any[];
+  updatedDataTarget: any[];
+  sourceIndex: number;
+  targetIndex: number;
+}
+
 @Directive({
-  selector: '[libDraggable]'
+  selector: '[dndDraggable]'
 })
 export class DraggableDirective implements OnInit {
 
   @Input()
-  data: any[];
+  data: any;
 
   @Output()
-  onDrop: EventEmitter<void> = new EventEmitter();
+  onDrop: EventEmitter<DndDropEvent> = new EventEmitter();
 
+  // TODO: Should go to draggable service
   sourceIndex: number;
 
+  // TODO: Should go to draggable service
   targetIndex: number;
 
+  // TODO: Should go to draggable service
   sourceData: any[];
 
   dragging = false;
@@ -123,7 +138,15 @@ export class DraggableDirective implements OnInit {
     this.elementRef.nativeElement.style.opacity = 1;
     this.ghostNode.parentNode.removeChild(this.ghostNode);
     this.fakeGhost = null;
-    moveItemInArray(this.sourceData, this.sourceIndex, this.targetIndex);
-    this.onDrop.next();
+    const updatedArray = moveItemInArray(this.sourceData, this.sourceIndex, this.targetIndex);
+    this.onDrop.next({
+      data: this.data,
+      sourceIndex: this.sourceIndex,
+      targetIndex: this.targetIndex,
+      dataSource: this.sourceData,
+      dataTarget: null,
+      updatedDataSource: updatedArray,
+      updatedDataTarget: null
+    });
   }
 }

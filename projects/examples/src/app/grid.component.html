@@ -6,13 +6,13 @@
   <div class="right">
     <div class="scroll-pane">
       <div class="container"
-           libDraggableContainer
-           [data]="items">
+           dndDraggableContainer
+           [(data)]="items">
         <ng-container *ngFor="let item of items">
           <div class="card"
-               libDraggable
+               dndDraggable
                [data]="item"
-               (onDrop)="onItemDrop()">
+               (onDrop)="onItemDrop($event)">
             {{item + 1}}
           </div>
         </ng-container>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DndDropEvent } from 'angular-dnd';
 
 @Component({
   templateUrl: './grid.component.html',
@@ -12,8 +13,8 @@ export class GridComponent implements OnInit {
     this.items = [...Array(12).keys()];
   }
 
-  onItemDrop() {
-    console.debug(this.items);
+  onItemDrop(event: DndDropEvent) {
+    console.debug(event);
   }
 
 }
